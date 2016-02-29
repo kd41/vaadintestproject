@@ -40,18 +40,34 @@ public class ViewFirst extends ViewBase {
         HorizontalLayout tableControls = new HorizontalLayout();
         Button add = new Button("Add new user", new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                editPerson(getNewUser());
+                addNewUser();
             }
         });
         Button delete = new Button("Delete selected user", new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                getUserService().delete((User) table.getValue());
-                updateTableData();
+                deleteUser((User) table.getValue());
             }
         });
         tableControls.addComponent(add);
         tableControls.addComponent(delete);
         return tableControls;
+    }
+
+    private void addNewUser() {
+        User user = new User();
+        user.setFirstName("Firstname");
+        user.setLastName("Lastname");
+        getUserService().save(user);
+        editPerson(user);
+        updateTableData();
+    }
+
+    private void deleteUser(User user) {
+        if (user == null) {
+            return;
+        }
+        getUserService().delete(user);
+        updateTableData();
     }
 
     private Component buildTable() {
@@ -88,9 +104,9 @@ public class ViewFirst extends ViewBase {
             public void buttonClick(Button.ClickEvent event) {
                 try {
                     fieldGroup.commit();
-                    getUserService().save(((BeanItem<User>) fieldGroup.getItemDataSource()).getBean());
+                    getUserService().saveOrUpdate(((BeanItem<User>) fieldGroup.getItemDataSource()).getBean());
+                    editPerson((User) table.getValue());
                     updateTableData();
-                    editPerson(null);
                 } catch (FieldGroup.CommitException e) {
                     e.printStackTrace();
                 }
@@ -108,7 +124,7 @@ public class ViewFirst extends ViewBase {
 
     private void editPerson(User user) {
         if (user == null) {
-            user = getNewUser();
+            return;
         }
         BeanItem<User> item = new BeanItem<User>(user);
         fieldGroup.setItemDataSource(item);
@@ -119,15 +135,8 @@ public class ViewFirst extends ViewBase {
         BeanItemContainer<User> container = new BeanItemContainer<User>(User.class, persons);
         table.setContainerDataSource(container);
         table.setVisibleColumns(new String[] { "id", "firstName", "lastName" });
-        table.setColumnHeaders( "Id", "First name", "Last name" );
+        table.setColumnHeaders("Id", "First name", "Last name");
         table.sort(new Object[] { "lastName", "firstName" }, new boolean[] { true, true });
         table.setPageLength(table.getItemIds().size());
-    }
-
-    private User getNewUser() {
-        User user = new User();
-        user.setFirstName("Firstname");
-        user.setLastName("Lastname");
-        return user;
     }
 }

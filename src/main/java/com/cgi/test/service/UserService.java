@@ -24,12 +24,18 @@ public class UserService {
         return id;
     }
 
+    public void saveOrUpdate(User user) {
+        log.info("saveOrUpdate(): user={}", user);
+        userDao.saveOrUpdate(user);
+        log.info("saveOrUpdate(): user saved. user={}", user);
+    }
+
     public List<User> getAll() {
         return userDao.getAll();
     }
 
     public User getById(int id) {
-        return userDao.getById(id);
+        return (User) userDao.getById(id);
     }
 
     public void delete(User user) {

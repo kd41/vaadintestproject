@@ -6,7 +6,8 @@ This is a simple Maven + Vaadin + Spring + Hibernate web application.
 * log4j.properties
 * pom.xml
 
-##Run application server (Tomcat) and type next command:
-* mvn clean install war:war tomcat7:redeploy
+##Run application:
+* mvn clean install war:war
+* run application server (Tomcat 8)
+* deploy application to server
 
-Project will automatically deployed to application server.
